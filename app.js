@@ -299,8 +299,9 @@ function renderNoteEntry(id, text) {
 
 // ---- Human Design Tab ----
 function renderHD() {
-  const person = HD_PEOPLE.find(p => p.id === state.hdPerson);
-  const total = person.circuits.reduce((n, c) => n + c.channels.length, 0);
+  const isRef = state.hdPerson === 'ref';
+  const circuits = isRef ? HD_REFERENCE : HD_PEOPLE.find(p => p.id === state.hdPerson).circuits;
+  const total = circuits.reduce((n, c) => n + c.channels.length, 0);
   return `
     <div class="page-header" style="background:linear-gradient(135deg,#831843,#DB2777)">
       <div class="page-header-inner">
@@ -317,8 +318,12 @@ function renderHD() {
                 onclick="state.hdPerson='${p.id}';render()">
           ${p.name}
         </button>`).join('')}
+      <button class="hd-person-tab ${state.hdPerson === 'ref' ? 'active' : ''}"
+              onclick="state.hdPerson='ref';render()" style="--active-color:#6B7280">
+        📖 參考庫
+      </button>
     </div>
-    ${person.circuits.map(circuit => `
+    ${circuits.map(circuit => `
       <div class="section-label" style="margin-top:8px">${circuit.icon} ${circuit.name}</div>
       <div class="hd-channel-list">
         ${circuit.channels.map(ch => renderChannelCard(ch, circuit)).join('')}
@@ -347,12 +352,13 @@ function renderChannelCard(ch, circuit) {
 function renderChannelDetail(id) {
   let ch = null;
   let circuit = null;
-  for (const person of HD_PEOPLE) {
-    for (const c of person.circuits) {
-      const found = c.channels.find(x => x.id === id);
-      if (found) { ch = found; circuit = c; break; }
-    }
-    if (ch) break;
+  const allCircuits = [
+    ...HD_PEOPLE.flatMap(p => p.circuits),
+    ...HD_REFERENCE
+  ];
+  for (const c of allCircuits) {
+    const found = c.channels.find(x => x.id === id);
+    if (found) { ch = found; circuit = c; break; }
   }
   if (!ch) return '';
   const note = getNote(ch.id);
