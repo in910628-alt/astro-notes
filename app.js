@@ -1,6 +1,6 @@
 const state = {
-  tab: 'chart',        // chart | houses | notes
-  detail: null,        // { type: 'planet'|'house', id }
+  tab: 'chart',        // chart | houses | hd | notes
+  detail: null,        // { type: 'planet'|'house'|'channel', id }
 };
 
 // ---- Persistence ----
@@ -29,14 +29,16 @@ function root() { return document.getElementById('app-root'); }
 function render() {
   let html = '';
   if (state.detail) {
-    if (state.detail.type === 'planet') html = renderPlanetDetail(state.detail.id);
-    else if (state.detail.type === 'house') html = renderHouseDetail(state.detail.number);
+    if (state.detail.type === 'planet')  html = renderPlanetDetail(state.detail.id);
+    else if (state.detail.type === 'house')   html = renderHouseDetail(state.detail.number);
+    else if (state.detail.type === 'channel') html = renderChannelDetail(state.detail.id);
   } else {
     html = `
       <div class="app-shell">
         <div class="page-content">
           ${state.tab === 'chart'  ? renderChart()  : ''}
           ${state.tab === 'houses' ? renderHouses() : ''}
+          ${state.tab === 'hd'     ? renderHD()     : ''}
           ${state.tab === 'notes'  ? renderNotes()  : ''}
         </div>
         ${renderNav()}
@@ -50,6 +52,7 @@ function renderNav() {
   const tabs = [
     { id: 'chart',  label: '星盤', icon: '✨' },
     { id: 'houses', label: '宮位', icon: '🏛' },
+    { id: 'hd',     label: '人類圖', icon: '🩷' },
     { id: 'notes',  label: '筆記', icon: '📝' },
   ];
   return `
@@ -290,6 +293,90 @@ function renderNoteEntry(id, text) {
     <div class="note-entry" onclick="${onclick}">
       <div class="note-entry-title">${emoji} ${title}</div>
       <div class="note-entry-preview">${preview}</div>
+    </div>`;
+}
+
+// ---- Human Design Tab ----
+function renderHD() {
+  const total = HD_CIRCUITS.reduce((n, c) => n + c.channels.length, 0);
+  return `
+    <div class="page-header" style="background:linear-gradient(135deg,#831843,#DB2777)">
+      <div class="page-header-inner">
+        <div class="header-logo">🩷</div>
+        <div>
+          <h1 class="header-title">人類圖</h1>
+          <p class="header-sub">Human Design・${total} 條通道</p>
+        </div>
+      </div>
+    </div>
+    ${HD_CIRCUITS.map(circuit => `
+      <div class="section-label" style="margin-top:16px">${circuit.icon} ${circuit.name}</div>
+      <div class="hd-channel-list">
+        ${circuit.channels.map(ch => renderChannelCard(ch, circuit)).join('')}
+      </div>`).join('')}`;
+}
+
+function renderChannelCard(ch, circuit) {
+  const hasNote = !!getNote(ch.id);
+  return `
+    <div class="hd-channel-card" onclick="navigate(null, {type:'channel', id:'${ch.id}'})"
+         style="border-left:4px solid ${circuit.color}">
+      <div class="hd-gate-badge" style="background:${circuit.colorLight};color:${circuit.color}">
+        ${ch.gateLabel || ch.gates}
+      </div>
+      <div class="hd-channel-info">
+        <div class="hd-channel-name">
+          ${ch.name}
+          ${hasNote ? '<span class="note-dot">●</span>' : ''}
+        </div>
+        <div class="hd-channel-tagline">${circuit.icon} ${ch.tagline}</div>
+      </div>
+      <div class="card-arrow">›</div>
+    </div>`;
+}
+
+function renderChannelDetail(id) {
+  let ch = null;
+  let circuit = null;
+  for (const c of HD_CIRCUITS) {
+    const found = c.channels.find(x => x.id === id);
+    if (found) { ch = found; circuit = c; break; }
+  }
+  if (!ch) return '';
+  const note = getNote(ch.id);
+  return `
+    <div class="detail-page">
+      <div class="detail-header" style="background:linear-gradient(135deg,${circuit.color},#831843)">
+        <button class="back-btn" onclick="navigate(null, null)">← 返回</button>
+        <div class="detail-hero">
+          <div class="detail-emoji">${circuit.icon}</div>
+          <h2 class="detail-name">${ch.name}</h2>
+          <div class="detail-sub">${ch.gateLabel || ch.gates}・${ch.tagline}</div>
+        </div>
+      </div>
+      <div class="detail-body">
+        <div class="info-chip" style="display:inline-block;background:${circuit.colorLight};color:${circuit.color};border-color:${circuit.color};margin-bottom:4px;border:1px solid">
+          ${circuit.name}
+        </div>
+        <div class="section-label" style="margin-top:20px">通道說明</div>
+        <div class="interpret-card">
+          ${ch.description.split('\n\n').map(p => `<p>${p}</p>`).join('')}
+        </div>
+        <div class="section-label" style="margin-top:20px">閘門詳解</div>
+        ${ch.gates.map(g => `
+          <div class="gate-card">
+            <div class="gate-num" style="background:${circuit.colorLight};color:${circuit.color}">
+              閘門 ${g.number}
+            </div>
+            <div class="gate-name">${g.name}</div>
+            <div class="gate-desc">${g.description}</div>
+          </div>`).join('')}
+        <div class="section-label" style="margin-top:20px">我的筆記</div>
+        <div class="note-area">
+          <textarea id="note-input" placeholder="記錄你的想法、心得或觀察…" rows="5">${note}</textarea>
+          <button class="save-btn" onclick="saveNoteUI('${ch.id}')">儲存筆記</button>
+        </div>
+      </div>
     </div>`;
 }
 

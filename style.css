@@ -255,6 +255,67 @@ body {
   font-size: 16px;
 }
 
+/* ---- Human Design ---- */
+.hd-channel-list { display: flex; flex-direction: column; gap: 4px; padding: 0 12px 8px; }
+
+.hd-channel-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  border-radius: 14px;
+  padding: 14px 16px;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.hd-channel-card:active { transform: scale(0.98); }
+
+.hd-gate-badge {
+  font-size: 13px;
+  font-weight: 700;
+  padding: 5px 10px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.hd-channel-info { flex: 1; min-width: 0; }
+.hd-channel-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1E1B4B;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.hd-channel-tagline { font-size: 13px; color: #6B7280; margin-top: 4px; }
+
+.gate-card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.gate-num {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-bottom: 8px;
+}
+.gate-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1E1B4B;
+  margin-bottom: 6px;
+}
+.gate-desc {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #374151;
+}
+
 /* ---- Bottom Nav ---- */
 .bottom-nav {
   position: fixed;
