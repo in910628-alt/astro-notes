@@ -1,5 +1,6 @@
 const state = {
   tab: 'chart',        // chart | houses | hd | notes
+  hdPerson: 'me',      // me | brother
   detail: null,        // { type: 'planet'|'house'|'channel', id }
 };
 
@@ -298,7 +299,8 @@ function renderNoteEntry(id, text) {
 
 // ---- Human Design Tab ----
 function renderHD() {
-  const total = HD_CIRCUITS.reduce((n, c) => n + c.channels.length, 0);
+  const person = HD_PEOPLE.find(p => p.id === state.hdPerson);
+  const total = person.circuits.reduce((n, c) => n + c.channels.length, 0);
   return `
     <div class="page-header" style="background:linear-gradient(135deg,#831843,#DB2777)">
       <div class="page-header-inner">
@@ -309,8 +311,15 @@ function renderHD() {
         </div>
       </div>
     </div>
-    ${HD_CIRCUITS.map(circuit => `
-      <div class="section-label" style="margin-top:16px">${circuit.icon} ${circuit.name}</div>
+    <div class="hd-person-tabs">
+      ${HD_PEOPLE.map(p => `
+        <button class="hd-person-tab ${state.hdPerson === p.id ? 'active' : ''}"
+                onclick="state.hdPerson='${p.id}';render()">
+          ${p.name}
+        </button>`).join('')}
+    </div>
+    ${person.circuits.map(circuit => `
+      <div class="section-label" style="margin-top:8px">${circuit.icon} ${circuit.name}</div>
       <div class="hd-channel-list">
         ${circuit.channels.map(ch => renderChannelCard(ch, circuit)).join('')}
       </div>`).join('')}`;
@@ -322,7 +331,7 @@ function renderChannelCard(ch, circuit) {
     <div class="hd-channel-card" onclick="navigate(null, {type:'channel', id:'${ch.id}'})"
          style="border-left:4px solid ${circuit.color}">
       <div class="hd-gate-badge" style="background:${circuit.colorLight};color:${circuit.color}">
-        ${ch.gateLabel || ch.gates}
+        ${ch.gateLabel}
       </div>
       <div class="hd-channel-info">
         <div class="hd-channel-name">
@@ -338,9 +347,12 @@ function renderChannelCard(ch, circuit) {
 function renderChannelDetail(id) {
   let ch = null;
   let circuit = null;
-  for (const c of HD_CIRCUITS) {
-    const found = c.channels.find(x => x.id === id);
-    if (found) { ch = found; circuit = c; break; }
+  for (const person of HD_PEOPLE) {
+    for (const c of person.circuits) {
+      const found = c.channels.find(x => x.id === id);
+      if (found) { ch = found; circuit = c; break; }
+    }
+    if (ch) break;
   }
   if (!ch) return '';
   const note = getNote(ch.id);

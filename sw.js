@@ -1,4 +1,4 @@
-const CACHE = 'astro-notes-v2';
+const CACHE = 'astro-notes-v3';
 const FILES = [
   './', './index.html', './style.css', './app.js', './data.js',
   './hd-data.js', './manifest.json', './icons/icon.svg'

@@ -256,6 +256,30 @@ body {
 }
 
 /* ---- Human Design ---- */
+.hd-person-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 14px 16px 4px;
+}
+.hd-person-tab {
+  flex: 1;
+  padding: 9px;
+  border-radius: 10px;
+  border: 2px solid #E5E7EB;
+  background: white;
+  font-size: 14px;
+  font-weight: 600;
+  color: #6B7280;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.hd-person-tab.active {
+  background: #DB2777;
+  border-color: #DB2777;
+  color: white;
+}
+
+
 .hd-channel-list { display: flex; flex-direction: column; gap: 4px; padding: 0 12px 8px; }
 
 .hd-channel-card {
