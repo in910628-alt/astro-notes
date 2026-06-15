@@ -195,6 +195,7 @@ function renderHouseItem(h) {
           ${hasNote ? '<span class="note-dot">●</span>' : ''}
         </div>
         <div class="house-keyword">${h.icon} ${h.keyword}</div>
+        ${h.sign ? `<div style="font-size:12px;color:#9CA3AF;margin-top:2px">${h.sign} · ${h.ruler} → 第${h.rulerIn}宮</div>` : ''}
         ${planetsHere.length > 0 ? `
           <div class="house-planets">
             ${planetsHere.map(p => `<span class="house-planet-tag" style="color:${p.color}">${p.emoji} ${p.name}</span>`).join('')}
@@ -232,10 +233,22 @@ function renderHouseDetail(number) {
                 <span class="card-arrow" style="margin-left:auto">›</span>
               </div>`).join('')}
           </div>` : ''}
+        ${h.sign ? `
+          <div class="section-label" style="margin-top:20px">宮位守護星</div>
+          <div class="info-row" style="padding:0 0 4px">
+            <div class="info-chip" style="background:#F5F3FF;color:#7C3AED;border-color:#DDD6FE">星座 ${h.sign}</div>
+            <div class="info-chip" style="background:#EEF2FF;color:#4F46E5;border-color:#C7D2FE">守護 ${h.ruler}</div>
+            <div class="info-chip house-chip">飛入第 ${h.rulerIn} 宮</div>
+          </div>` : ''}
         <div class="section-label" style="margin-top:20px">宮位說明</div>
         <div class="interpret-card">
           ${h.description.split('\n\n').map(para => `<p>${para}</p>`).join('')}
         </div>
+        ${h.rulerInterpretation ? `
+          <div class="section-label" style="margin-top:20px">守護星飛入解析</div>
+          <div class="interpret-card">
+            ${h.rulerInterpretation.split('\n\n').map(para => `<p>${para}</p>`).join('')}
+          </div>` : ''}
         <div class="section-label" style="margin-top:20px">我的筆記</div>
         <div class="note-area">
           <textarea id="note-input" placeholder="記錄你對這個宮位的想法…" rows="5">${note}</textarea>
