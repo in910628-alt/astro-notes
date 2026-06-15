@@ -195,7 +195,6 @@ function renderHouseItem(h) {
           ${hasNote ? '<span class="note-dot">●</span>' : ''}
         </div>
         <div class="house-keyword">${h.icon} ${h.keyword}</div>
-        ${h.sign ? `<div style="font-size:12px;color:#9CA3AF;margin-top:2px">${h.sign} · ${h.ruler} → 第${h.rulerIn}宮</div>` : ''}
         ${planetsHere.length > 0 ? `
           <div class="house-planets">
             ${planetsHere.map(p => `<span class="house-planet-tag" style="color:${p.color}">${p.emoji} ${p.name}</span>`).join('')}
