@@ -235,8 +235,8 @@ function renderHouseDetail(number) {
         ${h.sign ? `
           <div class="section-label" style="margin-top:20px">宮位守護星</div>
           <div class="info-row" style="padding:0 0 4px">
-            <div class="info-chip" style="background:#F5F3FF;color:#7C3AED;border-color:#DDD6FE">星座 ${h.sign}</div>
-            <div class="info-chip" style="background:#EEF2FF;color:#4F46E5;border-color:#C7D2FE">守護 ${h.ruler}</div>
+            <div class="info-chip" style="background:#F5F3FF;color:#7C3AED;border-color:#DDD6FE">宮頭落入的星座：${h.sign}</div>
+            <div class="info-chip" style="background:#EEF2FF;color:#4F46E5;border-color:#C7D2FE">守護星：${h.ruler}</div>
             <div class="info-chip house-chip">飛入第 ${h.rulerIn} 宮</div>
           </div>` : ''}
         <div class="section-label" style="margin-top:20px">宮位說明</div>
